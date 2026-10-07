@@ -1052,7 +1052,7 @@ export const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({
                           : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
                       }`}
                     >
-                      2. {t("ไม่เคย (ข้ามไปตอบข้อ 20)", "No (Skip to Question 20)")}
+                      2. {t("ไม่เคย", "No")}
                     </button>
                   </div>
 
@@ -1073,17 +1073,6 @@ export const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({
                         id="complaint-detail-input"
                         className="w-full p-2.5 bg-white border border-slate-200 text-xs rounded-lg shadow-inner focus:outline-none focus:ring-1 focus:ring-orange-500"
                       />
-                    </motion.div>
-                  )}
-
-                  {complaintSubmitted === "No" && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="p-2.5 bg-slate-100/90 rounded-lg text-slate-600 text-[11px] flex items-center gap-2 border border-slate-200/60"
-                    >
-                      <span className="text-slate-400 font-bold">ℹ️</span>
-                      <span>{t("ไม่เคยแจ้งข้อร้องเรียน — ข้ามไปตอบข้อ 20 ด้านล่าง", "No complaint submitted — Please proceed to Question 20 below")}</span>
                     </motion.div>
                   )}
                 </div>
