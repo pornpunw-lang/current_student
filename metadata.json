@@ -1,0 +1,6 @@
+{
+  "name": "Bangkok University Education Quality Survey",
+  "description": "Student Perspectives and Feedback on Education Management at Bangkok University for the Academic Year 2024",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

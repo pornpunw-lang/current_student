@@ -1,0 +1,193 @@
+{
+  "entities": {
+    "Admin": {
+      "title": "Admin",
+      "description": "Authorized administrators who can edit questions and view analytics",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "The administrator's email address"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the admin was authorized"
+        }
+      },
+      "required": ["email", "createdAt"]
+    },
+    "Question": {
+      "title": "Question",
+      "description": "Dynamic survey question in Part 1 managed by the administrators",
+      "type": "object",
+      "properties": {
+        "aspectTh": {
+          "type": "string",
+          "description": "Aspect/category of the question in Thai"
+        },
+        "aspectEn": {
+          "type": "string",
+          "description": "Aspect/category of the question in English"
+        },
+        "textTh": {
+          "type": "string",
+          "description": "Question text in Thai"
+        },
+        "textEn": {
+          "type": "string",
+          "description": "Question text in English"
+        },
+        "descriptionTh": {
+          "type": "string",
+          "description": "Elaborated details of the question in Thai"
+        },
+        "descriptionEn": {
+          "type": "string",
+          "description": "Elaborated details of the question in English"
+        },
+        "order": {
+          "type": "number",
+          "description": "Sorting order of the question"
+        }
+      },
+      "required": ["aspectTh", "aspectEn", "textTh", "textEn", "order"]
+    },
+    "Response": {
+      "title": "Response",
+      "description": "Feedback submitted by a Bangkok University student",
+      "type": "object",
+      "properties": {
+        "studentEmail": {
+          "type": "string",
+          "description": "Self-reported student email to ensure authenticity"
+        },
+        "studentFacultyTh": {
+          "type": "string",
+          "description": "Student's faculty in Thai"
+        },
+        "studentFacultyEn": {
+          "type": "string",
+          "description": "Student's faculty in English"
+        },
+        "studentProgram": {
+          "type": "string",
+          "description": "Student's program/major"
+        },
+        "part1Ratings": {
+          "type": "object",
+          "description": "Ratings for dynamic Part 1 questions. Key is questionId, value is score 1-5"
+        },
+        "part2ReceivedInfo": {
+          "type": "array",
+          "description": "Array of information categories received upon entry"
+        },
+        "part2ReceivedInfoOther": {
+          "type": "string",
+          "description": "Specification of other information received"
+        },
+        "part2Recommend": {
+          "type": "string",
+          "description": "Whether student would suggest BU to others (Yes/No)"
+        },
+        "part2RecommendReasons": {
+          "type": "array",
+          "description": "Selected reasons for suggesting BU"
+        },
+        "part2RecommendNoReason": {
+          "type": "string",
+          "description": "Specified reason for not suggesting BU"
+        },
+        "part2Adhere": {
+          "type": "string",
+          "description": "Whether student feels BU adheres to publicity (Yes/No)"
+        },
+        "part2AdhereReasons": {
+          "type": "array",
+          "description": "Selected reasons/aspects for adhering/not adhering"
+        },
+        "part2AdhereNoReason": {
+          "type": "string",
+          "description": "Specified reasons for not adhering"
+        },
+        "part2ComplaintSubmitted": {
+          "type": "string",
+          "description": "Whether student has submitted complaints (Yes/No)"
+        },
+        "part2ComplaintDetail": {
+          "type": "string",
+          "description": "Specified detail of complaints if any"
+        },
+        "part2ComplaintSatisfaction": {
+          "type": "number",
+          "description": "Satisfaction with BU's handling of complaints (1-5)"
+        },
+        "part2ComplaintChannels": {
+          "type": "array",
+          "description": "Selected channels used or seen for complaints"
+        },
+        "part2ComplaintChannelOther": {
+          "type": "string",
+          "description": "Other feedback channel specified"
+        },
+        "part2LoveLoyaltyProud": {
+          "type": "number",
+          "description": "Pride level (1-5)"
+        },
+        "part2LoveLoyaltyCooperate": {
+          "type": "number",
+          "description": "Cooperation level (1-5)"
+        },
+        "part2LoveLoyaltySustain": {
+          "type": "number",
+          "description": "Reputation support level (1-5)"
+        },
+        "part2ImproveSuggestions": {
+          "type": "array",
+          "description": "Selected suggestions for university improvement"
+        },
+        "part2ImproveSuggestionOther": {
+          "type": "string",
+          "description": "Other suggestion specified"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of survey submission"
+        }
+      },
+      "required": [
+        "studentEmail",
+        "studentFacultyTh",
+        "studentFacultyEn",
+        "studentProgram",
+        "part1Ratings",
+        "part2ReceivedInfo",
+        "part2Recommend",
+        "part2Adhere",
+        "part2ComplaintSubmitted",
+        "part2ComplaintSatisfaction",
+        "part2ComplaintChannels",
+        "part2LoveLoyaltyProud",
+        "part2LoveLoyaltyCooperate",
+        "part2LoveLoyaltySustain",
+        "part2ImproveSuggestions",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/admins/{userId}": {
+      "schema": "Admin",
+      "description": "Authorized administrators list"
+    },
+    "/questions/{questionId}": {
+      "schema": "Question",
+      "description": "Self-managed part 1 survey questions"
+    },
+    "/responses/{responseId}": {
+      "schema": "Response",
+      "description": "Records list of student questionnaire submissions"
+    }
+  }
+}

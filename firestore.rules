@@ -1,0 +1,95 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Catch-All Deny Block
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reusable Custom Security Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isBUVerifiedUser() {
+      return isSignedIn() && 
+             request.auth.token.email.endsWith('@bu.ac.th') &&
+             request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'pornpun.w@bu.ac.th' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Dynamic Validation Helpers
+    function isValidAdmin(data) {
+      return data.email is string && data.email.size() <= 100 &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidQuestion(data) {
+      return data.textTh is string && data.textTh.size() > 0 && data.textTh.size() <= 1500 &&
+             data.textEn is string && data.textEn.size() > 0 && data.textEn.size() <= 1500 &&
+             data.aspectTh is string && data.aspectTh.size() > 0 && data.aspectTh.size() <= 300 &&
+             data.aspectEn is string && data.aspectEn.size() > 0 && data.aspectEn.size() <= 300 &&
+             data.order is number;
+    }
+
+    function isValidResponse(data) {
+      return data.studentEmail is string && data.studentEmail.size() <= 150 &&
+             data.studentFacultyTh is string && data.studentFacultyTh.size() <= 150 &&
+             data.studentFacultyEn is string && data.studentFacultyEn.size() <= 150 &&
+             data.studentProgram is string && data.studentProgram.size() <= 250 &&
+             data.part1Ratings is map &&
+             data.part2ReceivedInfo is list &&
+             data.part2Recommend is string &&
+             data.part2Adhere is string &&
+             data.part2ComplaintSubmitted is string &&
+             data.part2ComplaintSatisfaction is number &&
+             data.part2ComplaintChannels is list &&
+             data.part2LoveLoyaltyProud is number &&
+             data.part2LoveLoyaltyCooperate is number &&
+             data.part2LoveLoyaltySustain is number &&
+             data.part2ImproveSuggestions is list &&
+             data.createdAt == request.time;
+    }
+
+    // Match Collection Blocks
+    match /admins/{userId} {
+      allow read, write: if isAdmin() && isValidId(userId);
+    }
+
+    match /questions/{questionId} {
+      allow read: if isBUVerifiedUser() || isAdmin();
+      allow create, update: if isAdmin() && isValidId(questionId) && isValidQuestion(incoming());
+      allow delete: if isAdmin() && isValidId(questionId);
+    }
+
+    match /responses/{responseId} {
+      allow get: if isAdmin() || (isBUVerifiedUser() && existing().studentEmail == request.auth.token.email);
+      allow list: if isAdmin();
+      allow create: if isBUVerifiedUser() && 
+                      isValidId(responseId) && 
+                      isValidResponse(incoming()) && 
+                      incoming().studentEmail == request.auth.token.email;
+      allow update: if false; // Survey responses are immutable after submission
+      allow delete: if isAdmin() && isValidId(responseId);
+    }
+  }
+}
